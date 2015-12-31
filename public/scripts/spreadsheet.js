@@ -61,9 +61,45 @@ var DataRow = React.createClass({
 });
 
 var DataCell = React.createClass({
+  getInitialState: function() {
+    return {
+      editing: false,
+      changedValue: this.props.value
+    };
+  },
+  handleDoubleClick: function(){
+    this.setState({editing: true});
+  },
+  handleOnBlur: function() {
+    this.setState({editing: false});
+  },
+  handleChange: function(e){
+    this.setState({changedValue: e.target.value})
+  },
   render: function() {
+    var cellContent;
+
+    if (this.state.editing) {
+      cellContent = (
+        <input defaultValue={this.state.changedValue}
+                  onBlur={this.handleOnBlur}
+                  onChange={this.handleChange} />
+      )
+    }
+    else {
+      cellContent = (
+        <span>
+         {this.state.changedValue}
+        </span>
+      )
+    }
+
     return(
-      <td>{this.props.value}</td>
+      <td onDoubleClick={this.handleDoubleClick}>
+        <div>
+          {cellContent}
+        </div>
+      </td>
     );
   }
 });
