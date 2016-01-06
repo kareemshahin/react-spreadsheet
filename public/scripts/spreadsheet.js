@@ -1,3 +1,12 @@
+// *******TODO*******
+// -TotalRow/TotalCell
+// -multiselect
+// -keyboard shortcuts
+// -styling (selected cells, etc)
+// -move responsiblity up heirarchy?
+// -AverageRow/AverageCell??
+// -Pub/Sub??
+
 var EventBus = {
   topics: {},
 
@@ -26,7 +35,9 @@ var HeaderRow = React.createClass({
       columns = [], i;
 
     for (i = 0; i < cells.length; i = i + 1) {
-      columns.push(<HeaderCell key={cells[i]} value={cells[i]}/>);
+      columns.push(<HeaderCell columnId={i} 
+                               key={cells[i]} 
+                               value={cells[i]}/>);
     }
     return(
       <tr>{columns}</tr>
@@ -45,14 +56,14 @@ var HeaderCell = React.createClass({
 var DataRow = React.createClass({
   render: function() {
     var cells = this.props.cells,
-      columns = [], i, coordinates;
+      columns = [], i;
 
     for (i = 0; i < cells.length; i = i + 1) {
-      var key = 'row_' + this.props.rowId +'_cell_' + i;
-      coordinates = [this.props.rowId, i]
+      var key = 'row_' + this.props.rowId +'_col_' + i;
       columns.push(<DataCell value={cells[i]}
-                                           coordinates={coordinates}
-                                           key={key} />);
+                             rowId={this.props.rowId}
+                             columnId={i}
+                             key={key} />);
     }
     return(
       <tr>{columns}</tr>
@@ -112,13 +123,15 @@ var SpreadSheet = React.createClass({
     var rows = [], i,
       data = this.state.data;
 
-    rows.push(<HeaderRow cells={this.props.data.header}/>);
+    rows.push(<HeaderRow key="header"
+                         ref="header_row"
+                         cells={this.props.data.header}/>);
 
     for (i = 0; i < data.length; i = i + 1) {
       var key = 'row_' + i;
       rows.push(<DataRow key={key}
-                                      rowId={i}
-                                      cells={data[i]}/>);
+                         rowId={i}
+                         cells={data[i]}/>);
     }
 
     return(
